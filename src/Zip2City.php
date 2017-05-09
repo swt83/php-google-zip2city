@@ -2,6 +2,8 @@
 
 namespace Travis;
 
+use Travis\Zipcode;
+
 class Zip2City
 {
 	public static $map = [
@@ -12,10 +14,14 @@ class Zip2City
 
 	];
 
-	public static function run($zip)
+	public static function run($str)
 	{
+		// filter zip
+		$object = Zipcode::make($str);
+		$zip = $object->five;
+
 		// catch error...
-		if (strlen($zip) < 5) throw new \Exception('Zip code must be at least 5 characters.');
+		if (!$zip) throw new \Exception('Invalid zipcode.');
 
 		// get json response
 		$response = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address='.$zip);
@@ -44,5 +50,15 @@ class Zip2City
 
 		// return
 		return $final;
+	}
+
+	public static function get($str)
+	{
+		return static::run($str);
+	}
+
+	public static function find($str)
+	{
+		return static::run($str);
 	}
 }
